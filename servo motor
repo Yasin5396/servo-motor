@@ -24,7 +24,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-uint8_t receivedData;  // Bluetooth üzerinden gelen veriyi tutmak için
+uint8_t receivedData;  // To keep data coming via Bluetooth
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -54,26 +54,26 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_TIM2_Init();   // PWM için TIM2'yi baslat
-  MX_USART1_UART_Init();  // HC-06 ile UART iletisimini baslat
+  MX_TIM2_Init();   // Start TIM2 for PWM
+  MX_USART1_UART_Init();  // Start UART communication with HC-06
   
-  /* PA0 pininde PWM baslatma (Servo motor kontrolü için) */
-  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);  // Servo motor için PWM baslat
+  /* PWM initialization on PA0 pin (For servo motor control) */
+  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);  // Start PWM for servo motor
   
   while (1)
   {
-    /* Bluetooth üzerinden veri al */
+    /* Receive data via Bluetooth */
     if (HAL_UART_Receive(&huart1, &receivedData, 1, HAL_MAX_DELAY) == HAL_OK)
     {
-      /* Veriye göre servo motorun açi degerini ayarla */
+      /* Adjust the angle value of the servo motor according to the data */
       if (receivedData == '0') {
-        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 1000);  // 0 derece (PWM degeri)
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 1000);  // 0 degree (PWM value)
       } else if (receivedData == '1') {
-        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 1500);  // 45 derece
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 1500);  // 45 degree
       } else if (receivedData == '2') {
-        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 2000);  // 90 derece
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 2000);  // 90 degree
       } else if (receivedData == '3') {
-        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 2500);  // 135 derece
+        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, 2500);  // 135 degree
       }
     }
   }
